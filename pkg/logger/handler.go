@@ -135,12 +135,14 @@ func (eh *LoggerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Get or Create an ID
 	id := getOrCreateID(r)
 	contentType := r.Header.Get("Content-Type")
+	contentEncoding := r.Header.Get("Content-Encoding")
 	// log Request
 	if eh.logMode == v1beta1.LogAll || eh.logMode == v1beta1.LogRequest {
 		if err := QueueLogRequest(LogRequest{
 			Url:              eh.logUrl,
 			Bytes:            &body,
 			ContentType:      contentType,
+			ContentEncoding:  contentEncoding,
 			ReqType:          CEInferenceRequest,
 			Id:               id,
 			SourceUri:        eh.sourceUri,
@@ -168,6 +170,7 @@ func (eh *LoggerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		eh.log.Error(err, "Failed to read response body")
 	}
+	contentEncoding = lrw.Header().Get("Content-Encoding")
 	// log Response
 	if lrw.statusCode == http.StatusOK {
 		if eh.logMode == v1beta1.LogAll || eh.logMode == v1beta1.LogResponse {
@@ -175,6 +178,7 @@ func (eh *LoggerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				Url:              eh.logUrl,
 				Bytes:            &responseBody,
 				ContentType:      contentType,
+				ContentEncoding:  contentEncoding,
 				ReqType:          CEInferenceResponse,
 				Id:               id,
 				SourceUri:        eh.sourceUri,

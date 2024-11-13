@@ -135,6 +135,9 @@ func (w *Worker) sendCloudEvent(logReq LogRequest) error {
 	event.SetExtension(MetadataAttr, string(encodedMetadata))
 
 	event.SetSource(logReq.SourceUri.String())
+	if logReq.ContentEncoding != "" {
+		event.SetDataContentEncoding(logReq.ContentEncoding)
+	}
 	if err := event.SetData(logReq.ContentType, *logReq.Bytes); err != nil {
 		return fmt.Errorf("while setting cloudevents data: %w", err)
 	}

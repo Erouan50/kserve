@@ -24,6 +24,7 @@ type LogRequest struct {
 	Url              *url.URL
 	Bytes            *[]byte
 	ContentType      string
+	ContentEncoding  string
 	ReqType          string
 	Id               string
 	SourceUri        *url.URL
